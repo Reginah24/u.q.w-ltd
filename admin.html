@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - U.Q.W Ltd</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/portal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+        }
+        .upload-zone {
+            border: 3px dashed var(--border-color);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .upload-zone:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-light);
+        }
+        .upload-zone i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .admin-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="container" style="max-width: 800px;">
+            <div class="dashboard-header" style="margin-bottom: 30px;">
+                <div>
+                    <h2>Admin Panel</h2>
+                    <p>Upload EBM Receipts for Clients</p>
+                </div>
+                <button onclick="logout()" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <!-- Upload Receipt Form -->
+            <div class="admin-form">
+                <h3>Upload New Receipt</h3>
+                <form id="uploadReceiptForm">
+                    <!-- File Upload Zone -->
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Click or Drag PDF Here</h4>
+                        <p>Upload EBM receipt PDF (Max 5MB)</p>
+                        <input type="file" id="receiptFile" accept=".pdf" style="display: none;">
+                        <div id="fileName" style="margin-top: 15px; color: var(--success-color);"></div>
+                    </div>
+
+                    <!-- Client Information -->
+                    <div class="form-group">
+                        <label for="clientEmail">Client Email *</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="clientEmail" required placeholder="client@email.com">
+                        </div>
+                        <small style="color: var(--text-light);">Receipt will be linked to this email. Client will receive notification.</small>
+                    </div>
+
+                    <!-- Receipt Details -->
+                    <div class="form-group">
+                        <label for="receiptNumber">Receipt Number *</label>
+                        <div class="input-icon">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="text" id="receiptNumber" required placeholder="EBM-2026-001">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="receiptDate">Date *</label>
+                        <div class="input-icon">
+                            <i class="fas fa-calendar"></i>
+                            <input type="date" id="receiptDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount (RWF) *</label>
+                        <div class="input-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                            <input type="number" id="amount" required placeholder="150000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="service">Service Type *</label>
+                        <select id="service" required class="input-icon" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px;">
+                            <option value="">Select Service</option>
+                            <option value="Customs Clearance">Customs Clearance</option>
+                            <option value="Freight Forwarding">Freight Forwarding</option>
+                            <option value="Cargo Documentation">Cargo Documentation</option>
+                            <option value="Border Operations">Border Operations</option>
+                            <option value="Consultation">Consultation & Advisory</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cargoType">Cargo Type *</label>
+                        <div class="input-icon">
+                            <i class="fas fa-box"></i>
+                            <input type="text" id="cargoType" required placeholder="e.g., Electronics, Textiles">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="sendNotification" checked>
+                            <span>Send email notification to client</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-upload"></i> Upload Receipt
+                    </button>
+
+                    <div id="uploadMessage" class="auth-message" style="margin-top: 15px;"></div>
+                </form>
+            </div>
+
+            <!-- Recent Uploads -->
+            <div class="admin-form" style="margin-top: 30px;">
+                <h3>Recent Uploads</h3>
+                <div id="recentUploads">
+                    <p style="color: var(--text-light); text-align: center; padding: 20px;">
+                        <i class="fas fa-inbox"></i><br>
+                        No recent uploads
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // File Upload Handler
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('receiptFile');
+        const fileNameDiv = document.getElementById('fileName');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                if (file.type === 'application/pdf') {
+                    fileNameDiv.innerHTML = `<i class="fas fa-file-pdf"></i> ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                } else {
+                    alert('Please select a PDF file');
+                    this.value = '';
+                }
+            }
+        });
+
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = 'var(--primary-color)';
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.style.borderColor = 'var(--border-color)';
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = 'var(--border-color)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') {
+                fileInput.files = files;
+                fileNameDiv.innerHTML = `<i class="fas fa-file-pdf"></i> ${files[0].name}`;
+            }
+        });
+
+        // Form submission
+        document.getElementById('uploadReceiptForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!fileInput.files.length) {
+                showUploadMessage('Please select a PDF file', 'error');
+                return;
+            }
+
+            // In production, this would upload to your backend
+            const formData = {
+                file: fileInput.files[0],
+                clientEmail: document.getElementById('clientEmail').value,
+                receiptNumber: document.getElementById('receiptNumber').value,
+                date: document.getElementById('receiptDate').value,
+                amount: document.getElementById('amount').value,
+                service: document.getElementById('service').value,
+                cargoType: document.getElementById('cargoType').value,
+                sendNotification: document.getElementById('sendNotification').checked
+            };
+
+            // Simulate upload
+            showUploadMessage('Uploading receipt...', 'info');
+            
+            setTimeout(() => {
+                showUploadMessage('Receipt uploaded successfully! Client will receive email notification.', 'success');
+                this.reset();
+                fileNameDiv.innerHTML = '';
+                
+                // Add to recent uploads
+                addToRecentUploads(formData);
+            }, 1500);
+        });
+
+        function showUploadMessage(message, type) {
+            const messageEl = document.getElementById('uploadMessage');
+            messageEl.textContent = message;
+            messageEl.className = 'auth-message ' + type;
+        }
+
+        function addToRecentUploads(data) {
+            const recentDiv = document.getElementById('recentUploads');
+            const uploadHTML = `
+                <div class="receipt-card" style="margin-bottom: 15px;">
+                    <div class="receipt-header">
+                        <div>
+                            <div class="receipt-number">${data.receiptNumber}</div>
+                            <div class="receipt-date">${data.clientEmail}</div>
+                        </div>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="receipt-field">
+                            <label>Amount</label>
+                            <span>${data.amount} RWF</span>
+                        </div>
+                        <div class="receipt-field">
+                            <label>Service</label>
+                            <span>${data.service}</span>
+                        </div>
+                        <div class="receipt-field">
+                            <label>Status</label>
+                            <span style="color: var(--success-color);">
+                                <i class="fas fa-check-circle"></i> Uploaded
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (recentDiv.children[0].tagName === 'P') {
+                recentDiv.innerHTML = uploadHTML;
+            } else {
+                recentDiv.insertAdjacentHTML('afterbegin', uploadHTML);
+            }
+        }
+
+        // Set default date to today
+        document.getElementById('receiptDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>

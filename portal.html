@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="U.Q.W Ltd Client Portal - Access your EBM receipts online anytime, anywhere. Secure login for clients.">
+    <meta name="keywords" content="U.Q.W Ltd portal, EBM receipts, client login, online receipts Rwanda">
+    <title>Client Portal - U.Q.W Ltd</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/portal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>U.Q.W Ltd</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="portal.html" class="active btn-portal">Client Portal</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Portal Container -->
+    <div class="portal-container">
+        <!-- Login Section -->
+        <section id="loginSection" class="portal-section active">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <i class="fas fa-user-circle"></i>
+                    <h2>Client Portal Login</h2>
+                    <p>Access your EBM receipts and transaction history</p>
+                </div>
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" required placeholder="your@email.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" required placeholder="••••••••">
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="link-text" onclick="showForgotPassword(); return false;">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <div id="loginMessage" class="auth-message"></div>
+                </form>
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="#" onclick="showRegister(); return false;" class="link-text">Register Here</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Register Section -->
+        <section id="registerSection" class="portal-section">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h2>Create Account</h2>
+                    <p>Register to access your EBM receipts online</p>
+                </div>
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <div class="input-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="regName" required placeholder="John Doe">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="regEmail" required placeholder="your@email.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Phone Number</label>
+                        <div class="input-icon">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="regPhone" required placeholder="+250 7XX XXX XXX">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regPassword" required placeholder="••••••••" minlength="6">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirm Password</label>
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regConfirmPassword" required placeholder="••••••••">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                    <div id="registerMessage" class="auth-message"></div>
+                </form>
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="#" onclick="showLogin(); return false;" class="link-text">Login Here</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="portal-section">
+            <div class="dashboard-header">
+                <div>
+                    <h2>Welcome, <span id="userName">Client</span>!</h2>
+                    <p>Access your EBM receipts and transaction history</p>
+                </div>
+                <button onclick="logout()" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="totalReceipts">0</h3>
+                        <p>Total Receipts</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="thisMonth">0</h3>
+                        <p>This Month</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="downloads">0</h3>
+                        <p>Downloads</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="receipts-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchReceipts" placeholder="Search by receipt number, date, or amount...">
+                </div>
+                <div class="filter-group">
+                    <select id="filterMonth" class="filter-select">
+                        <option value="">All Months</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <select id="filterYear" class="filter-select">
+                        <option value="">All Years</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Receipts List -->
+            <div class="receipts-container">
+                <h3>Your EBM Receipts</h3>
+                <div id="receiptsList" class="receipts-list">
+                    <!-- Receipts will be loaded here dynamically -->
+                    <div class="no-receipts">
+                        <i class="fas fa-inbox"></i>
+                        <p>No receipts found</p>
+                        <small>Your EBM receipts will appear here</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forgot Password Section -->
+        <section id="forgotPasswordSection" class="portal-section">
+            <div class="auth-box">
+                <div class="auth-header">
+                    <i class="fas fa-key"></i>
+                    <h2>Reset Password</h2>
+                    <p>Enter your email to receive reset instructions</p>
+                </div>
+                <form id="forgotPasswordForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="forgotEmail">Email Address</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="forgotEmail" required placeholder="your@email.com">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-paper-plane"></i> Send Reset Link
+                    </button>
+                    <div id="forgotMessage" class="auth-message"></div>
+                </form>
+                <div class="auth-footer">
+                    <p><a href="#" onclick="showLogin(); return false;" class="link-text">Back to Login</a></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>EBM Receipt Details</h3>
+                <span class="close-modal" onclick="closeReceiptModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="receiptModalBody">
+                <!-- Receipt details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button onclick="downloadReceipt()" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+                <button onclick="printReceipt()" class="btn btn-outline">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/portal.js"></script>
+</body>
+</html>
